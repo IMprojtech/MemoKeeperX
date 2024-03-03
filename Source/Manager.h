@@ -1,31 +1,24 @@
 
 /* Contiene le funzioni di primo avvio e di gestione file  */
 
-void SetWrite(void){
-  
-int size = sizeof (DefaultFile);
-int check;	
+void SetRead(void){ 
+
+int size = sizeof (DefaultFile)-1;
+
+char buf[size];
  
+if ((PtrFile = fopen (Setting, "r")) == NULL ) Error(ErrorOpenFile,""); 
+	
+while(!feof(PtrFile)){ fscanf(PtrFile,"%s", buf);
+	if(buf[0]=='#') fgets(buf,size,PtrFile);
+	else if (buf[0]!=' ' && buf[0]!='\n'){
+		strncpy(DefaultFile,buf,size); break;}}
+
+fclose( PtrFile );
+
 if ((PtrFile = fopen (DefaultFile, "r")) == NULL ){
-	if ((PtrFile = fopen (DefaultFile, "w")) == NULL ) Error(ErrorCreationFile,"");}
-fclose( PtrFile );
-   
-if ((PtrFile = fopen (Setting, "w")) == NULL ) Error(ErrorCreationFile,""); 
- 
-fseek(PtrFile,0,SEEK_END); 
-check=fwrite( DefaultFile,size, 1, PtrFile );
-fclose( PtrFile );
+	if ((PtrFile = fopen (DefaultFile, "w")) == NULL )Error(ErrorCreationFile,"");} // crea il file di note
 
-if (check == 0) Error(ErrorWriteFile,"");}
-
-void SetRead(void){
-  
-int size = sizeof (DefaultFile);
-
-if ((PtrFile = fopen (Setting, "r")) == NULL ) Error(ErrorCreationFile,""); 
- 
-fseek(PtrFile,0,SEEK_SET); 
-fread( DefaultFile, size, 1, PtrFile );
 fclose( PtrFile );}
 
 void Crea_Directory(char *name){
@@ -33,25 +26,27 @@ mkdir(name, S_IWUSR|S_IRUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);}
 
 int Primo_Avvio(void){
  
-Crea_Directory(Direct); 
+Crea_Directory(Direct);  
 
-if ((PtrFile = fopen (Setting, "r")) == NULL ){ 
-	if ((PtrFile = fopen (Setting, "wb+")) == NULL )Error(ErrorCreationFile,"");}
-fclose( PtrFile );   
+if ((PtrFile = fopen (Setting, "w")) == NULL ) Error(ErrorCreationFile,""); 
+ 
+fputs("# Here you can indicate the file to use \n", PtrFile);
+fputs(DefaultFile, PtrFile);
+fclose( PtrFile );
    
 if ((PtrFile = fopen (DefaultFile, "r")) == NULL ){
-	if ((PtrFile = fopen (DefaultFile, "wb+")) == NULL )Error(ErrorCreationFile,"");}
+	if ((PtrFile = fopen (DefaultFile, "w")) == NULL )Error(ErrorCreationFile,"");} // crea il file di note
+
 fclose( PtrFile );   
- 
-SetWrite();   
 return 0;}       
   
-void Save(void){
+void Save(void){ 
  
 int size = sizeof (NotesData);
 int check;	
 
 if ((PtrFile = fopen (DefaultFile, "rb+")) == NULL ) Error(ErrorOpenFile,""); 
+
 if (NDat.Index==0){
 	fseek(PtrFile,0,SEEK_END); 
 	NDat.Index=((ftell(PtrFile)/size)+1); 
@@ -68,8 +63,8 @@ fclose( PtrFile );
 
 if (check == 0) Error(ErrorWriteFile,"");}
 
-void Rebuild(void){
-  
+void Rebuild(void){ // ricostruisce il file di note per eliminare spazi inutilizzati lasciati dalla cancellazione di note
+	
 FILE *In;  FILE *Out;
 
 int size = sizeof (NotesData);

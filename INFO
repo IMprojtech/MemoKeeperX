@@ -1,0 +1,9 @@
+
+Modifica di comportamento:
+nm senza argomenti stampa le note anziché l'help
+
+Il file Notes.Dat viene creato nella home e il file nm.conf viene creato in home/.config
+
+L'utilizzo di -x per stampare un file allegato o cancellare una nota non è più richiesto
+
+Modifica stile

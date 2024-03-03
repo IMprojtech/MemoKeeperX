@@ -11,10 +11,10 @@
 
  #define NAME  "Note Management"
  #define ALIAS  "nm"  
- #define VER  "1.0"
+ #define VER  "1.1"
  
- #define Dir   "/.NotesManager" 
- #define SetFile   "/.config" 
+ #define Dir  "/.config" 
+ #define SetFile  "/nm.conf" 
  #define FileNotes  "/Notes.Dat"
    
  #define GRS  "\e[1m"
@@ -38,12 +38,12 @@ typedef struct{  //! Notes
 
 NotesData NDat;
 
-char *Direct;
-char Setting[201];
-char DefaultFile[201];
+char *Direct; 
+char Setting[201]={'\0'};
+char DefaultFile[201]={'\0'};
 char DefaultTag[21]={"T01"};
 
-char Vbit[8]={"        "};
+char Vbit[8]={"        "}; 
 
 FILE *PtrFile;  
 	

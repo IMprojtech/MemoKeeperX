@@ -10,16 +10,15 @@ int main(int argc, char **argv){
 	
 memset(&NDat,0,sizeof (NotesData));
 
-Direct = getenv("HOME"); strcat(Direct,Dir); 
-strcpy(Setting,Direct); strcat(Setting,SetFile);
+Direct = getenv("HOME"); 
+strcpy(Setting,Direct); strcat(Setting,Dir); strcat(Setting,SetFile); 
 strcpy(DefaultFile,Direct); strcat(DefaultFile,FileNotes); 
 
-if ((PtrFile = fopen (Setting, "r")) == NULL ){ 
-	Primo_Avvio(); Help(); exit(0); }
- 
+if ((PtrFile = fopen (Setting, "r")) == NULL ){  
+	Primo_Avvio(); Help(); exit(0); }  
+
 else{ fclose( PtrFile );
-	if (argc < 2 ){ Help(); return 0;}
-	SetRead(); Scanner(argc, argv);}	
+	SetRead(); Scanner(argc, argv);}
 
 return 0;}
 
