@@ -15,6 +15,8 @@ void TakeTime(void);
 // File_Operations.h
 void ReadNDat(int start, int end);
 void CopyNDat(NotesData *dest, NotesData *src);
-void Save(NotesData *tmp);
+void CopyMemo(char **dest, char **src);
+void Save(NotesData *tmpNDat,char **Memo);
 void Edit(void);
 void PrintFile(void);
+void Backup(void);

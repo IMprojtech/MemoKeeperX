@@ -35,15 +35,16 @@ void CheckDuplicate(TreeNode *root, char *key, FindFunction find, int *cont) {
 
 //! Funzione ausiliaria per verificare se un nodo è discendente di un altro nodo
 int IsDescendant(TreeNode *potentialDescendant, TreeNode *ancestor) {
-
-    while (potentialDescendant != NULL) {
-        if (potentialDescendant == ancestor) {
-            return 1;
-        }
-
-        potentialDescendant = potentialDescendant->firstChild;
+  while (potentialDescendant != NULL) {
+    if (potentialDescendant == ancestor) {
+      return 1;  
     }
-    return 0;
+
+    potentialDescendant = potentialDescendant->firstChild;
+
+  }
+
+  return 0; 
 }
 
 //----- Ricerca -----
@@ -77,6 +78,24 @@ TreeNode *FindNode(TreeNode *root, char *key, FindFunction find) {
     return result;
 }
 
+TreeNode *FindPreviousSibling(TreeNode *root, TreeNode *node) {
+	
+    if (root == NULL) {
+        return NULL;
+    }
+
+    if (root->nextSibling == node || root->firstChild == node){
+        return root;
+    }
+
+    TreeNode *result = FindPreviousSibling(root->firstChild,node);
+    if (result == NULL) {
+        result = FindPreviousSibling(root->nextSibling, node);
+    }
+
+    return result;
+}	
+ 
 //----- Gestione Albero -----
 
 TreeNode *InsertNode(TreeNode *currentNode, BlockInfo data) {
@@ -139,48 +158,92 @@ TreeNode *RemoveNode(TreeNode *root, char *hash) {
     return root;
 }
 
-void ModifyNode(TreeNode *root, char *key, BlockInfo newData,
-                FindFunction find) {
-    TreeNode *nodeToModify = FindNode(root, key, find);
-
-    if (nodeToModify != NULL) {
-        nodeToModify->data = newData;
-    } else {
-        Error(ErrorFindNode, "");
+TreeNode *CopySubTree(TreeNode *subtree) {
+    if (subtree == NULL) {
+        return NULL;
     }
+
+    TreeNode *copy = malloc(sizeof(TreeNode));
+    copy->data = subtree->data;
+    copy->firstChild = CopySubTree(subtree->firstChild);
+    copy->nextSibling = CopySubTree(subtree->nextSibling);
+
+    return copy;
 }
 
-void MoveNode(TreeNode *root, char *keyDestination, char *keySource,
-              FindFunction find) {
-
-    TreeNode *nodeSource      = FindNode(root, keySource, find);
-    TreeNode *nodeDestination = FindNode(root, keyDestination, find);
-
-    if (nodeSource == NULL || nodeDestination == NULL) {
-        Error(ErrorFindNode, "");
-        return;
-    }
-
-    if (IsDescendant(nodeSource, nodeDestination)) {
+void SwapNodes( TreeNode *previous, TreeNode *current, TreeNode *next) {
+    if ( current == NULL || next == NULL)
         Error(ErrorMoveNode, "");
-        return;
-    }
 
-    root = RemoveNode(root, keySource);
-
-    if (nodeDestination->firstChild == NULL) {
-        nodeDestination->firstChild = nodeSource;
-    }
-
-    else {
-        TreeNode *sibling = nodeDestination->firstChild;
-        while (sibling->nextSibling != NULL) {
-            sibling = sibling->nextSibling;
-        }
-        sibling->nextSibling = nodeSource;
+    if (previous->firstChild == current) {
+        current->nextSibling = next->nextSibling;
+        next->nextSibling = current;
+        previous->firstChild = next;
+    } else {
+        current->nextSibling = next->nextSibling;
+        next->nextSibling = current;
+        previous->nextSibling = next;
     }
 }
 
+TreeNode *MoveNode(TreeNode *root, char *keyDestination, char *keySource, FindFunction find) {
+ 
+    TreeNode *sourceNode = FindNode(root, keySource, find);
+    
+    if (sourceNode == NULL)
+        Error("source", ErrorFindNode);    
+
+    if (strncasecmp(keyDestination,"up",strlen(keyDestination)) == 0) {  // Move Up
+		TreeNode *previusNode = FindPreviousSibling(root, sourceNode);
+		TreeNode *previuspreviusNode = FindPreviousSibling(root, previusNode);
+
+		if (previusNode == NULL || previusNode->firstChild == sourceNode)
+			Error(ErrorMoveNode, "");
+	
+		SwapNodes(previuspreviusNode, previusNode,  sourceNode);		
+	
+	} 
+    else if (strncasecmp(keyDestination,"down",strlen(keyDestination)) == 0) {  // Move Down
+		TreeNode *previusNode = FindPreviousSibling(root, sourceNode);
+
+		if (sourceNode->nextSibling == NULL)
+			Error(ErrorMoveNode, "");
+
+		SwapNodes(previusNode,sourceNode, sourceNode->nextSibling);
+    } 
+    else {
+
+		TreeNode *nodeDestination = FindNode(root, keyDestination, find);
+
+		if (nodeDestination == NULL)
+			Error("destination", ErrorFindNode);
+
+		if (IsDescendant(sourceNode, nodeDestination)) {
+			Error(ErrorMoveNode, "");
+		}
+
+		TreeNode *newNode = malloc(sizeof(TreeNode));
+		newNode->data = sourceNode->data;
+		newNode->firstChild = CopySubTree(sourceNode->firstChild);
+		newNode->nextSibling = NULL;
+
+		root = RemoveNode(root, keySource);
+
+		if (nodeDestination->firstChild == NULL) {
+			nodeDestination->firstChild = newNode;
+		} 
+		else {
+			TreeNode *sibling = nodeDestination->firstChild;
+			while (sibling->nextSibling != NULL) {
+				sibling = sibling->nextSibling;
+			}
+			sibling->nextSibling = newNode;
+		}
+	}
+
+return root;
+}
+    
 //----- Salva e Carica Albero -----
 
 void WriteTree(TreeNode *root) {
@@ -278,3 +341,4 @@ TreeNode *LoadFromFile(TreeNode *root) {
     }
     return root;
 }
+

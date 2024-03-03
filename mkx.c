@@ -54,8 +54,8 @@ int main(int argc, char *argv[]) {
     else
         Mapping();
 
-    if (NDat.Memo != NULL)
-        free(NDat.Memo);
+    if (Memo != NULL)
+        free(Memo);
     FreeTree(root);
     return 0;
 }

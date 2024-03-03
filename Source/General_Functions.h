@@ -49,13 +49,15 @@ printf("%sCOMMAND LIST%s\n"
 "    -t    insert tag, default \"T01\"\n"
 "    -a    attach file\n"
 "    -s    show tags used\n"
+"    -o    organize tags\n"
+"    -m    modification\n"
 "    -r    remove notes\n"
 "    -h    note identifier hash\n" 
 "    -e    extended print \n"
 "    -d    find date\n"
-"    -f 	  print file\n"
+"    -f    print file\n"
 "    -F    print path file\n"
-"    -M    write or read Memo\n\n"
+"    -X    write or read Memo\n\n"
 
 "    --map    interactive organization of notes\n\n",GRS,NML);
 
@@ -82,11 +84,11 @@ printf("    %s -t T02 -w \"notes\"   %s->%s    adds a note with tag T02\n"
        "		-t \"T02>T01\" -w \"notes\" -> will create a T02 tag inside the T01 tag\n\n",ALIAS,GRS,NML);
        
 printf("    %s -t T02 -w \"notes\" -a \"file.txt\"   %s->%s    adds a note and file with tag T02\n",ALIAS,GRS,NML);
-printf("    %s -t T02 -w \"notes\" -a \"file.txt\" -M   %s->%s    adds a note, file and Memo with tag T02\n",ALIAS,GRS,NML);
+printf("    %s -t T02 -w \"notes\" -a \"file.txt\" -X   %s->%s    adds a note, file and Memo with tag T02\n",ALIAS,GRS,NML);
 
 printf("    %s   %s->%s    print all notes \n",ALIAS,GRS,NML);
 printf("    %s -e   %s->%s    prints all notes in long format \n",ALIAS,GRS,NML);
-printf("    %s -M   %s->%s    Print all notes including Memo \n",ALIAS,GRS,NML);
+printf("    %s -X   %s->%s    Print all notes including Memo \n",ALIAS,GRS,NML);
 printf("    %s -t T02   %s->%s    print all notes with tag h02\n",ALIAS,GRS,NML);
 printf("    %s -h [5dca...]   %s->%s    prints the specific note with the hash 5dca...\n",ALIAS,GRS,NML);
 printf("    %s -d 2023-01-01   %s->%s    print all notes date 2023-01-01\n"
@@ -190,29 +192,29 @@ void DinamicWrite(void) {
     int length     = 0;
     int ch;
 
-    NDat.Memo = (char *)malloc(max_length * sizeof(char));
+    Memo = (char *)malloc(max_length * sizeof(char));
 
-    if (NDat.Memo == NULL) {
+    if (Memo == NULL) {
         Error(ErrorMemory, "");
     }
 
     printf("termina inserimento con CTRL+D\n");
 
     while ((ch = getchar()) != EOF) {
-        NDat.Memo[length] = ch;
+        Memo[length] = ch;
         length++;
 
         if (length >= max_length) {
             max_length *= 2;
-            NDat.Memo = (char *)realloc(NDat.Memo, max_length * sizeof(char));
+            Memo = (char *)realloc(Memo, max_length * sizeof(char));
 
-            if (NDat.Memo == NULL) {
+            if (Memo == NULL) {
                 Error(ErrorMemory, "");
             }
         }
     }
 
-    NDat.Memo[length] = '\0';
+    Memo[length] = '\0';
 }
 
 void TakeTime(void) {

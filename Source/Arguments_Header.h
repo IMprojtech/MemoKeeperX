@@ -5,7 +5,7 @@
 #include <getopt.h>
 
 #define LONG_SIZE 14
-#define SHORT_SIZE 11
+#define SHORT_SIZE 13
 
 //----------- Long Argument
 
@@ -23,7 +23,7 @@ enum{ // Long Cases
 	LONG_OPT_COLOR_MEMO,	// 11
 	LONG_OPT_FONT,			// 12
 	LONG_OPT_EDITOR,		// 13
-	LONG_OPT_MAP			// 14
+	LONG_OPT_BACKUP			// 14
 };
 
 const struct option long_options[] = { // Struct Long Cases
@@ -40,7 +40,7 @@ const struct option long_options[] = { // Struct Long Cases
 	{"color_memo", required_argument, NULL, LONG_OPT_COLOR_MEMO},        
 	{"font", required_argument, NULL, LONG_OPT_FONT},
 	{"editor", required_argument, NULL, LONG_OPT_EDITOR},      
-    {"map", no_argument, NULL, LONG_OPT_MAP},               
+    {"backup", no_argument, NULL, LONG_OPT_BACKUP},               
 	{NULL, 0, NULL, 0}
 };
 
@@ -75,25 +75,28 @@ enum{ // Short Cases
 	SHORT_OPT_SHOW,			// 8			
 	SHORT_OPT_EXTEND,		// 9
 	SHORT_OPT_WRITE,		// 10
-	SHORT_OPT_MEMO			// 11
+	SHORT_OPT_MEMO,			// 11
+	SHORT_OPT_ORGANIZE, 	// 12
+	SHORT_OPT_MODIFY		// 13
 };	
 
-const char* short_options = "rh:fFd:t:a:sewM"; // Array Short Cases
+const char* short_options = "rh:fFd:t:a:sewXo:m:"; // Array Short Cases
 
 bool CompatibleShortOptions[][SHORT_SIZE] = { // Short Cases
-  //   1  	    2        3        4        5        6        7        8        9       10       11  
-	{false,   true,    false,   false,   false,   true,    false,   false,   false,   false,   false}, // 1
-	{true,    false,   true,    true,    false,   false,   false,   false,   true,    false,   true},  // 2
-	{false,   true,    false,   false,   false,   true,    false,   false,   false,   false,   false}, // 3
-	{false,   true,    false,   false,   false,   true,    false,   false,   false,   false,   false}, // 4
-    {false,   false,   false,   false,   false,   false,   false,   false,   true,    false,   true},  // 5
-    {true,    false,   true,    true,    false,   false,   true,    false,   true,    true,    true},  // 6
-    {false,   false,   false,   false,   false,   true,    false,   false,   false,   true,    true},  // 7
-    {false,   false,   false,   false,   false,   false,   false,   false,   true,    false,   false}, // 8 
-    {false,   true,    false,   false,   true,    true,    false,   true,    false,   false,   true},  // 9
-    {false,   false,   false,   false,   false,   true,    true,    false,   false,   false,   true},  // 10
-	{false,   true,    false,   false,   true,    true,    true,    false,   true,    true,    false}  // 11
-
+  //   1  	    2        3        4        5        6        7        8        9       10       11  	 12       13      
+	{false,   true,    false,   false,   false,   true,    false,   false,   false,   false,   false,   false,   false},  // 1
+	{true,    false,   true,    true,    false,   false,   false,   false,   true,    false,   true,    false,   false},  // 2
+	{false,   true,    false,   false,   false,   true,    false,   false,   false,   false,   false,   false,   false},  // 3
+	{false,   true,    false,   false,   false,   true,    false,   false,   false,   false,   false,   false,   false},  // 4
+    {false,   false,   false,   false,   false,   false,   false,   false,   true,    false,   true,    false,   false},  // 5
+    {true,    false,   true,    true,    false,   false,   true,    false,   true,    true,    true,    false,   true},  // 6
+    {false,   false,   false,   false,   false,   true,    false,   false,   false,   true,    true,    false,   true},  // 7
+    {false,   false,   false,   false,   false,   false,   false,   false,   true,    false,   false,   false,   false},  // 8 
+    {false,   true,    false,   false,   true,    true,    false,   true,    false,   false,   true,    false,   false},  // 9
+    {false,   false,   false,   false,   false,   true,    true,    false,   false,   false,   true,    false,   true},  // 10
+	{false,   true,    false,   false,   true,    true,    true,    false,   true,    true,    false,   false,   true},  // 11
+   	{false,   false,   false,   false,   false,   false,   false,   false,   false,   false,   false,   false,   false},  // 12
+	{false,   false,   false,   false,   false,   true,    true,    false,   false,   true,    true,    false,   false}   // 13
 };
 
 //-------------------------

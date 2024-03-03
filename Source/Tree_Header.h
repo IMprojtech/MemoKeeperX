@@ -25,5 +25,5 @@ typedef int (*FindFunction)(TreeNode *, char *);
 FILE *PtrFileTree;
 
 TreeNode    *root = NULL;
-BlockInfo    data = {0, 0, "#", "#", "#"};
+BlockInfo    data = {0, 0, ".", ".", "."};
 FindFunction find;

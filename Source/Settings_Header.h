@@ -7,7 +7,7 @@
 // Anagrafica programma
 #define NAME "MemoKeeperX"
 #define ALIAS "mkx"
-#define VER "3.0"
+#define VER "3.1"
 
 // File di default
 #define Dir "/.config"

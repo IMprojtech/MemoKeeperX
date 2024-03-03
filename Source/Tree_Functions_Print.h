@@ -4,9 +4,28 @@
 #define BRANCH(depth)                                                          \
     for (int i = 0; i < depth; i++)                                            \
         printf("%s%s├──%s", NML, WHT, Font);
+        
 #define BRANCH_SPACE(depth)                                                    \
     for (int i = 0; i < depth; i++)                                            \
         printf("%s%s│  %s", NML, WHT, Font);
+
+//----- Stampa Memo -----
+
+void PrintMemo(char *str, int depth) {
+    char* token = str;
+    char* newline;
+
+    while ((newline = strchr(token, '\n')) != NULL) {
+        *newline = '\0';  
+        printf("%s%s%s%s\n", Font, Color_Memo, token, NML);
+        *newline = '\n';  
+        BRANCH_SPACE(depth);
+        token = newline + 1;  
+    }
+
+    printf("%s%s%s%s\n", Font, Color_Memo, token, NML);
+    BRANCH_SPACE(depth);
+}
 
 //----- Stampa NDat -----
 
@@ -18,23 +37,23 @@ void Print(TreeNode *root, int depth) {
     else if (File == true)
         PrintFile();
 
-    else if (Memo == false) {
+    else if (Mem == false) {
         BRANCH(depth);
         printf("%s%s%s %s%s ", Font, Color_Tag, root->data.tag, Color_Note,
                NDat.Comment);
         if (Extended == false) {
             if (strlen(NDat.Link_File) != 0)
                 printf("%s# ", Color_File);
-            if (NDat.Memo != NULL) {
-                if (strlen(NDat.Memo) != 0)
+            if (Memo != NULL) {
+                if (strlen(Memo) != 0)
                     printf("%s# ", Color_Memo);
             }
             printf("%s\n", NML);
         } else {
             if (strlen(NDat.Link_File) != 0)
                 printf("%s%s ", Color_File, NDat.Link_File);
-            if (NDat.Memo != NULL) {
-                if (strlen(NDat.Memo) != 0)
+            if (Memo != NULL) {
+                if (strlen(Memo) != 0)
                     printf("%s# ", Color_Memo);
             }
             printf("%s%s %s%s%s\n", Color_Hash, root->data.hash, Color_Date,
@@ -53,22 +72,11 @@ void Print(TreeNode *root, int depth) {
             printf("%s%s%s%s\n", Font, Color_Note, NDat.Comment, NML);
         }
 
-        if (NDat.Memo != NULL) {
-            if (strlen(NDat.Memo) != 0) {
+        if (Memo != NULL) {
+            if (strlen(Memo) != 0) {
                 BRANCH_SPACE(depth);
-
-                char *ptr = NDat.Memo;
-
-                while (*ptr != '\0') {
-                    if (*ptr != '\n') {
-                        printf("%s%s%c%s", Font, Color_Memo, *ptr, NML);
-                    } else {
-                        printf("\n");
-                        BRANCH_SPACE(depth);
-                    }
-                    ptr++;
-                }
-                printf("\n");
+				PrintMemo(Memo,depth);
+				printf("\n");
             }
         }
 

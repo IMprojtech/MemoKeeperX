@@ -24,25 +24,30 @@ typedef struct { //! Notes
     char  Comment[501];
     char  Link_File[201];
     char  Date[20];
-    char *Memo;
 } NotesData;
 
 NotesData NDat = {0};
+
+char *Memo;
 
 char In_Hash[42];
 char In_Tag[50];
 char In_Date[20];
 
+char Parent_Hash[42];
+
 char DefaultTag[] = {"T01"};
 
 bool Map      = false;
-bool Memo     = false;
+bool Mem      = false;
 bool Show     = false;
 bool Write    = false;
 bool Remove   = false;
 bool File     = false;
 bool FilePath = false;
 bool Extended = false;
+bool Organize = false;
+bool Modify = false;
 
 #include "Header.h"
 #include "Error.h"

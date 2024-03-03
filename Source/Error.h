@@ -25,6 +25,7 @@
 
 #define ErrorDuplicate "duplicate hash"
 #define ErrorFound "not found"
+#define ErrorMissing "missing"
 
 #define ErrorMemory "memory allocation"
 

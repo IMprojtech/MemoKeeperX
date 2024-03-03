@@ -123,11 +123,11 @@ void ProcessArguments(int argc, char *argv[]) {
                     Set("Editor=", 0, optarg);
                 break;
 
-            case LONG_OPT_MAP:
-                if (i == 0) {
-                    CheckLongCompatibility(LONG_OPT_MAP);
-                    Map = true;
-                }
+            case LONG_OPT_BACKUP:
+                if (i == 0) 
+                    CheckLongCompatibility(LONG_OPT_BACKUP);
+                else                  
+					Backup();
                 break;
 
                 //----------Short Cases
@@ -202,10 +202,26 @@ void ProcessArguments(int argc, char *argv[]) {
                 }
                 break;
 
-            case 'M':
+			case 'o':
+                if (i == 0){
+                    CheckShortCompatibility(SHORT_OPT_ORGANIZE);                
+                  	Organize = true;
+				}	
+                break;     
+
+			case 'm':
+                if (i == 0)
+                    CheckShortCompatibility(SHORT_OPT_MODIFY);
+                else{
+                    LoadStruct(In_Hash, optarg, sizeof(In_Hash) - 1);
+					Modify = true;    
+				}	            
+                break;
+
+            case 'X':
                 if (i == 0) {
                     CheckShortCompatibility(SHORT_OPT_MEMO);
-                    Memo = true;
+                    Mem = true;
                 }
                 break;
 
@@ -218,13 +234,21 @@ void ProcessArguments(int argc, char *argv[]) {
             }
         }
 
-        if (optind < argc && Write == false)
+        if (optind < argc && Write == false && Organize == false )
             Error(ErrorArgument, "");
     }
 
-    if (Write == true) {
+    if (Write == true ) {
         for (int j = optind; j < argc; j++) {
             LoadComment(NDat.Comment, argv[j], sizeof(NDat.Comment) - 1);
-        }
+        } 
     }
+    if (Organize == true) {
+		if (argc != 4)
+			Error(ErrorArgument, "");
+		else {	
+			LoadStruct(In_Hash, argv[--optind], sizeof(In_Hash) - 1);
+			LoadStruct(Parent_Hash, argv[++optind], sizeof(Parent_Hash) - 1);
+		}
+	}
 }

@@ -4,10 +4,62 @@
 #include "Search_Date_Processing.c"
 
 void ProcessTree(void) {
+	
+	if (Modify == true) {
+		
+		NotesData tmpNDat={0};
+		char *tmpMemo=NULL;
+	
+		if(Write == true)
+			strcpy(tmpNDat.Comment,NDat.Comment);
+		
+		if(strlen(NDat.Link_File)!=0)
+			strcpy(tmpNDat.Link_File,NDat.Link_File);
 
-    if (Write == true) {
-        NotesData tmp;
-        if (Memo == true) {
+		int cont=0;
+		find     = FindHashNode;        
+        
+        CheckDuplicate(root, In_Hash, find, &cont);      
+        if (cont > 1)
+			Error(ErrorDuplicate, "");	    		
+		
+		find = FindHashNode;
+		TreeNode *node = FindNode(root, In_Hash, find);
+	
+		if (node == NULL){
+			Error(ErrorFound,"");
+		}	
+		
+			ReadNDat(node->data.start,node->data.end);	
+			node->data.start=0;
+			node->data.end=0;
+			
+			if(strlen(tmpNDat.Comment)!=0)
+				strcpy(NDat.Comment,tmpNDat.Comment);
+		
+			if(strlen(tmpNDat.Link_File)!=0)
+				strcpy(NDat.Link_File,tmpNDat.Link_File);
+			
+			if(strlen(In_Tag)!=0){
+				strcpy(NDat.Tag,In_Tag);
+				strcpy(node->data.tag,In_Tag);
+			}	
+					
+			if (Mem == true) 
+				Edit();
+		
+			CopyNDat(&tmpNDat, &NDat);
+			CopyMemo(&tmpMemo, &Memo);		
+		
+			Save(&tmpNDat,&tmpMemo);
+			SaveToFile(root); 
+		
+		}
+		
+    else if (Write == true) {
+        NotesData tmpNDat;
+        char *tmpMemo=NULL;
+        if (Mem == true) {
             Edit();
         }
 
@@ -25,7 +77,8 @@ void ProcessTree(void) {
         strcpy(data.date, NDat.Date);
         strcpy(data.hash, In_Hash);
 
-        CopyNDat(&tmp, &NDat);
+        CopyNDat(&tmpNDat, &NDat);
+        CopyMemo(&tmpMemo, &Memo);
 
         if (strlen(parentTag) == 0)
             root = InsertNode(root, data);
@@ -61,7 +114,7 @@ void ProcessTree(void) {
                 }
             }
         }
-        Save(&tmp);
+        Save(&tmpNDat,&tmpMemo);
         SaveToFile(root);
     }
 
@@ -99,12 +152,36 @@ void ProcessTree(void) {
             }
         } else
             Error(ErrorSintax, "");
-        Save(NULL);
+        Save(NULL,NULL);
         SaveToFile(root);
     }
 
-    else if (Show == true)
-        PrintTree(root, 0);
+	else if (Organize == true) {
+
+		if(In_Hash[0]=='.')
+			Error("the root cannot be moved ","");	
+			
+		int contD = 0,contS =0;
+        find     = FindHashNode;
+        
+        CheckDuplicate(root, Parent_Hash, find, &contD);      
+        if (contD > 1)
+			Error(ErrorDuplicate, "destination");	 
+			                 		
+		CheckDuplicate(root, In_Hash, find, &contS);
+        if (contS > 1){
+        	Error(ErrorDuplicate, "source");
+        }	
+		
+		find = FindHashNode;
+		root = MoveNode(root, Parent_Hash, In_Hash,find);
+
+		Save(NULL,NULL);
+		SaveToFile(root);                 		
+}
+
+    else if (Show == true){
+        PrintTree(root, 0);}
 
     else {
         if (strlen(In_Tag) != 0) {
@@ -151,4 +228,5 @@ void ProcessTree(void) {
         } else
             NDatPrintAll(root, 0);
     }
+
 }

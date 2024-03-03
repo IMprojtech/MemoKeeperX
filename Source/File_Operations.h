@@ -8,16 +8,23 @@
 void ReadNDat(int start, int end) {
     FILE *In;
 
-    if ((In = fopen(File_Note, "rb")) == NULL)
-        Error(ErrorCreationFile, "");
+    if ((In = fopen(File_Note, "rb")) == NULL){
+        Error(ErrorCreationFile, "");}
+        
+	memset(&NDat, 0, sizeof(NotesData));
+
+	if(Memo!=NULL){ 
+	free(Memo);
+	Memo=NULL;}
 
     fseek(In, start, SEEK_SET);
     if (end > 0) {
         fread(&NDat, sizeof(NotesData), 1, In);
         size_t memoLength = end - start - sizeof(NotesData);
-        NDat.Memo         = (char *)malloc(memoLength * sizeof(char));
-        fread(NDat.Memo, memoLength, 1, In);
-    }
+        if(memoLength>1){
+			Memo = (char *)malloc(memoLength * sizeof(char));
+			fread(Memo, memoLength, 1, In);}
+        }
 
     fclose(In);
 }
@@ -29,32 +36,41 @@ void CopyNDat(NotesData *dest, NotesData *src) {
     strcpy(dest->Link_File, src->Link_File);
     strcpy(dest->Date, src->Date);
 
-    if (src->Memo != NULL) {
-        dest->Memo = malloc(strlen(src->Memo) + 1);
-        if (dest->Memo != NULL) {
-            strcpy(dest->Memo, src->Memo);
+}
+
+void CopyMemo(char **dest, char **src) {
+
+    if (*src != NULL) {
+        *dest = malloc(strlen(*src) + 1);
+        if (*dest != NULL) {
+            strcpy(*dest, *src);
+            free(*src);
+            *src=NULL;
         } else {
             Error(ErrorMemory, "");
         }
     } else
-        dest->Memo = NULL;
+        *dest = NULL;
+        
+     
 }
 
 void ReadFile(FILE *In, int start, int end) {
 
     fseek(In, start, SEEK_SET);
 
-    memset(&NDat, 0, sizeof(NotesData));
-    if (NDat.Memo != NULL) {
-        free(NDat.Memo);
-        NDat.Memo = NULL;
-    }
+	memset(&NDat, 0, sizeof(NotesData));
+	
+	if(Memo!=NULL){ 
+	free(Memo);
+	Memo=NULL;}
 
     if (end > 0) {
         fread(&NDat, sizeof(NotesData), 1, In);
         size_t memoLength = end - start - sizeof(NotesData);
-        NDat.Memo         = (char *)malloc(memoLength * sizeof(char));
-        fread(NDat.Memo, memoLength, 1, In);
+        if(memoLength>1){
+			Memo = (char *)malloc(memoLength * sizeof(char));
+			fread(Memo, memoLength, 1, In);}
     }
 }
 
@@ -67,23 +83,24 @@ void WriteFile(FILE *Out, TreeNode *root) {
     if (check == 0)
         Error(ErrorWriteFile, "");
 
-    if (NDat.Memo != NULL) {
-        check = fwrite(NDat.Memo, strlen(NDat.Memo) + 1, 1, Out);
+    if (Memo != NULL) {
+        check = fwrite(Memo, sizeof(char), strlen(Memo)+1, Out);
         if (check == 0)
-            Error(ErrorWriteFile, "");
+			Error(ErrorWriteFile, "");
     }
 
     root->data.end = ftell(Out);
 }
 
-void ScrollTree(TreeNode *root, NotesData *tmp, FILE *In, FILE *Out) {
+void ScrollTree(TreeNode *root, NotesData *tmpNDat,char **tmpMemo, FILE *In, FILE *Out) {
 
     if (root == NULL) {
         return;
     }
 
     if (root->data.end == 0) {
-        CopyNDat(&NDat, tmp);
+        CopyNDat(&NDat, tmpNDat);
+         CopyMemo(&Memo, tmpMemo);
     }
 
     else {
@@ -94,11 +111,11 @@ void ScrollTree(TreeNode *root, NotesData *tmp, FILE *In, FILE *Out) {
         WriteFile(Out, root);
     }
 
-    ScrollTree(root->firstChild, tmp, In, Out);
-    ScrollTree(root->nextSibling, tmp, In, Out);
+    ScrollTree(root->firstChild, tmpNDat, tmpMemo, In, Out);
+    ScrollTree(root->nextSibling, tmpNDat, tmpMemo, In, Out);
 }
 
-void Save(NotesData *tmp) {
+void Save(NotesData *tmpNDat,char **tmpMemo) {
 
     FILE *In;
     FILE *Out;
@@ -114,25 +131,33 @@ void Save(NotesData *tmp) {
     if ((Out = fopen(File_Note, "wb")) == NULL)
         Error(ErrorCreationFile, "");
 
-    ScrollTree(root, tmp, In, Out);
+    ScrollTree(root, tmpNDat, tmpMemo, In, Out);
 
     fclose(In);
     fclose(Out);
+    
+    remove(old);
+
 }
 
 void Edit(void) {
 
     if (strcasecmp(Editor, "Nul") == 0) {
-        DinamicWrite();
+        DinamicWrite(); 
         return;
     }
 
     FILE *tempFile;
 
-    if ((tempFile = fopen("Edit.tmp", "w+")) == NULL) {
+    if ((tempFile = fopen("Edit.tmp", "wb")) == NULL) 
         Error(ErrorCreationFile, "");
-    }
-
+    
+     if (Memo != NULL) {
+        int check = fwrite(Memo, sizeof(char), strlen(Memo)+1, tempFile);
+        if (check == 0)
+			Error(ErrorWriteFile, "");
+	}
+		
     fclose(tempFile);
     pid_t pid = fork();
 
@@ -150,7 +175,7 @@ void Edit(void) {
         Error(ErrorProcess, "");
     }
 
-    if ((tempFile = fopen("Edit.tmp", "r")) == NULL) {
+    if ((tempFile = fopen("Edit.tmp", "rb")) == NULL) {
         Error(ErrorOpenFile, "");
     }
 
@@ -161,9 +186,9 @@ void Edit(void) {
         newSize++;
     }
 
-    NDat.Memo = (char *)malloc((newSize + 2) * sizeof(char));
+   Memo = (char *)malloc((newSize + 2) * sizeof(char));
 
-    if (NDat.Memo == NULL) {
+    if (Memo == NULL) {
         Error(ErrorMemory, "");
     }
 
@@ -173,13 +198,14 @@ void Edit(void) {
 
     for (i = 0; i < newSize; ++i) {
         ch           = fgetc(tempFile);
-        NDat.Memo[i] = ch;
+        Memo[i] = ch;
     }
 
-    NDat.Memo[i] = '\0';
+   Memo[i] = '\0';
 
     fclose(tempFile);
     remove("Edit.tmp");
+   
 }
 
 void PrintFile(void) {
@@ -205,3 +231,30 @@ void PrintFile(void) {
         fclose(input);
     }
 }
+
+void Backup(void){
+
+    FILE *In;
+    FILE *Out;
+
+    char Backup[201];
+
+    strcpy(Backup, File_Note);
+    strcat(Backup, "_Backup");
+    
+    if ((In = fopen(File_Note, "rb")) == NULL)
+        Error(ErrorCreationFile, "");
+    if ((Out = fopen(Backup, "wb")) == NULL)
+        Error(ErrorCreationFile, "");
+
+    char ch = fgetc(In); 
+	
+	while (!feof(In)) {
+	fputc(ch,Out); 
+	ch = fgetc(In);}  
+
+    fclose(In);
+    fclose(Out);
+    exit (0);
+}	
+	
