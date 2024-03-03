@@ -10,15 +10,8 @@ int main(int argc, char **argv){
 	
 memset(&NDat,0,sizeof (NotesData));
 
-Direct = getenv("HOME"); 
-strcpy(Setting,Direct); strcat(Setting,Dir); strcat(Setting,SetFile); 
-strcpy(DefaultFile,Direct); strcat(DefaultFile,FileNotes); 
-
-if ((PtrFile = fopen (Setting, "r")) == NULL ){  
-	Primo_Avvio(); Help(); exit(0); }  
-
-else{ fclose( PtrFile );
-	SetRead(); Scanner(argc, argv);}
-
+Start_System_Check();
+printf("%s",Font); 
+ 
+Scanner(argc, argv); 
 return 0;}
-

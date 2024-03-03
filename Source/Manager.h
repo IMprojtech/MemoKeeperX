@@ -1,51 +1,12 @@
 
-/* Contiene le funzioni di primo avvio e di gestione file  */
-
-void SetRead(void){ 
-
-int size = sizeof (DefaultFile)-1;
-
-char buf[size];
- 
-if ((PtrFile = fopen (Setting, "r")) == NULL ) Error(ErrorOpenFile,""); 
-	
-while(!feof(PtrFile)){ fscanf(PtrFile,"%s", buf);
-	if(buf[0]=='#') fgets(buf,size,PtrFile);
-	else if (buf[0]!=' ' && buf[0]!='\n'){
-		strncpy(DefaultFile,buf,size); break;}}
-
-fclose( PtrFile );
-
-if ((PtrFile = fopen (DefaultFile, "r")) == NULL ){
-	if ((PtrFile = fopen (DefaultFile, "w")) == NULL )Error(ErrorCreationFile,"");} // crea il file di note
-
-fclose( PtrFile );}
-
-void Crea_Directory(char *name){
-mkdir(name, S_IWUSR|S_IRUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);}    
-
-int Primo_Avvio(void){
- 
-Crea_Directory(Direct);  
-
-if ((PtrFile = fopen (Setting, "w")) == NULL ) Error(ErrorCreationFile,""); 
- 
-fputs("# Here you can indicate the file to use \n", PtrFile);
-fputs(DefaultFile, PtrFile);
-fclose( PtrFile );
-   
-if ((PtrFile = fopen (DefaultFile, "r")) == NULL ){
-	if ((PtrFile = fopen (DefaultFile, "w")) == NULL )Error(ErrorCreationFile,"");} // crea il file di note
-
-fclose( PtrFile );   
-return 0;}       
+/* Contiene le funzioni di gestione file  */
   
 void Save(void){ 
  
 int size = sizeof (NotesData);
 int check;	
 
-if ((PtrFile = fopen (DefaultFile, "rb+")) == NULL ) Error(ErrorOpenFile,""); 
+if ((PtrFile = fopen (File_Note, "rb+")) == NULL ) Error(ErrorOpenFile,""); 
 
 if (NDat.Index==0){
 	fseek(PtrFile,0,SEEK_END); 
@@ -72,12 +33,12 @@ int check,i,x=0;
 
 char tmp[201];
 
-strcpy(tmp,DefaultFile);
+strcpy(tmp,File_Note);
 strcat(tmp,".tmp");	
-rename(DefaultFile,tmp);
+rename(File_Note,tmp);
 
 if ((In = fopen (tmp, "r")) == NULL ) Error(ErrorCreationFile,""); 
-if ((Out = fopen (DefaultFile, "w")) == NULL ) Error(ErrorCreationFile,""); 
+if ((Out = fopen (File_Note, "w")) == NULL ) Error(ErrorCreationFile,""); 
 
 fseek(In,0,SEEK_END); 
 i=(ftell(In)/size); 

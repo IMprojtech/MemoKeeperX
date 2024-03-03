@@ -1,6 +1,8 @@
 
-Aggiunta una visione delle note ristretta senza data e senza percorso file, con possibilità di estendere la visione con -e
+Il programma cambi nome in MemoKeeper
 
-Aggiunta una scorciatoia per aprire file allegati con +(n)
+Aggiunte funzionalità per il setup:
+    si possono cambiare i colori, impostare grassetto,
+    si possono inoltre creare e gestire più file note direttamente da riga di comando
 
-Aggiunta la possibilità di stampare solo il percorso file allegato con -F (n).  (Utile per redirezione output)
+Aggiunta la possibilità di aprire file allegati con altri editor (vim,less,cat)

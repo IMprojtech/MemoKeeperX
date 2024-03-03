@@ -2,32 +2,32 @@
 /* Contiene funzioni di logica per interpretare i dati 
  * e verificare gli errori */
 
-/*! il vettore Vbit viene usato da controllo per la sintassi !*/
+/*! il vettore bit viene usato da controllo per la sintassi !*/
 
 void Controll(void){ // controlla la sintassi inserita e richiama l'operazione da effettuare
   
 char key[21];  
   
-if (Vbit[0]=='W' && (strlen (NDat.Note)!=0 || strlen (NDat.Link_File)!=0)){
+if (bit=='W'){
 	if (strlen(NDat.Tag)==0)strcpy(NDat.Tag,DefaultTag);
 	Save();}
-  
-else if (Vbit[0]=='p'){ 
-	if (Vbit[1]=='x'){Trova((NDat.Index)-1);PrintDat();}
-	else if (Vbit[2]=='t'){strcpy(key,NDat.Tag); Note_Research(1,key);}
-	else if (Vbit[3]=='d'){strcpy(key,NDat.Data); Note_Research(2,key);}
-    else {Note_Research(3,NULL);}}
-  
-else if (Vbit[6]=='f'){Trova((NDat.Index)-1);PrintFile();}
-else if (Vbit[6]=='F'){Trova((NDat.Index)-1);PrintPathFile();}
-else if (Vbit[0]=='s'){Note_Research(4,NULL);}	
-else if (Vbit[7]=='r'){ Save();}
+ 
+else if (bit=='p'){
+	if(strlen (NDat.Tag) != 0){strcpy(key,NDat.Tag); Note_Research(1,key);}
+	else {Note_Research(3,NULL);}}
+
+else if (bit=='s'){Note_Research(4,NULL);}	
+else if (bit=='r'){ Save();}
+else if (bit=='x'){Trova((NDat.Index)-1);PrintDat();}  
+else if (bit=='f'){Trova((NDat.Index)-1);PrintFile();}
+else if (bit=='F'){Trova((NDat.Index)-1);PrintPathFile();}
+else if (bit=='d'){strcpy(key,NDat.Data); Note_Research(2,key);}
 
 else Error(ErrorSintax,"");}
 
-void LoadVbit(int x,char ch){ 
-if (Vbit[x]==' ') Vbit[x]=ch;
-else Error(ErrorLogic,"");} 
+void Loadbit(char ch){ 
+if (bit==' ') bit=ch;
+else Error(ErrorOption,"");} 
 
 void LoadStuctChar(char *_dest,char _src[],int size){ 
 if(_src==NULL)Error(ErrorArgument,"");
@@ -38,9 +38,6 @@ void LoadStuctInt(char _src[]){
 if(_src==NULL)Error(ErrorArgument,"");  
 else NDat.Index=atoi(_src);}
 
-void LoadStuctIntInt(int _val){
-NDat.Index=_val;}
-
 void LoadNote(char *_dest,char _src[],int size){
 if(strlen(_dest)+strlen(_src)>size) Error(ErrorOverflow,"");
 else{  strcat(_dest,_src); strcat (_dest," ");}}
@@ -48,50 +45,61 @@ else{  strcat(_dest,_src); strcat (_dest," ");}}
 void Scanner(int argc, char **argv){ // fa una scanzione degli argomenti passati dal terminale e verifica che non ci siano argomenti errati 
 	
 int i,j; 
-int length, value;
+int length;
 
-char ch,*str; 	
+char ch; 	
 
 for (i=1; i<argc; i++){     	
 	switch (argv[i][0]){
-		case '+':  LoadVbit(6,'f'); value=strtod(argv[i],&str);
-			if (value>0 && strlen(str)<=0){ LoadStuctIntInt(value); j=length;}
-			else Error(ErrorOption,argv[i]);
-			break;
-		
-		case '-': length=strlen(argv[i]);
+		case '+': Loadbit ('f'); LoadStuctInt(argv[i]); break;
+	  
+	    case '-': length=strlen(argv[i]);
 			for(j=1; j<length; ++j){ ch=argv[i][j];
 				switch (ch){
 	
-					case 'p': LoadVbit(0,ch); break; 
-					case 's': LoadVbit(0,ch);  break;
-					case 'x': LoadVbit(1,ch); LoadStuctInt(argv[++i]); break; 
-					case 't': LoadVbit(2,ch); LoadStuctChar(NDat.Tag,argv[++i],sizeof(NDat.Tag)-1);break; 
-					case 'd': LoadVbit(3,ch); Extended=true;  LoadStuctChar(NDat.Data,argv[++i],sizeof(NDat.Data)-1); break;
-					case 'e': Vbit[0]='p'; Extended=true; break;
-					case 'a': LoadVbit(4,ch); LoadStuctChar(NDat.Link_File,argv[++i],sizeof(NDat.Link_File)-1); break; 
-					case 'f': LoadVbit(6,ch); LoadStuctInt(argv[++i]); break;
-					case 'F': LoadVbit(6,ch); LoadStuctInt(argv[++i]); break;
-					case 'r': LoadVbit(7,ch); LoadStuctInt(argv[++i]); break;   
-					case 'i': LoadVbit(5,ch); break;   
+					case 's': Loadbit(ch);  break;
+					case 'r': Loadbit(ch); LoadStuctInt(argv[++i]); break;   
+					case 'x': Loadbit(ch); LoadStuctInt(argv[++i]); break; 
+					case 'f': Loadbit(ch); LoadStuctInt(argv[++i]); break;
+					case 'F': Loadbit(ch); LoadStuctInt(argv[++i]); break;
+					case 'd': Loadbit(ch); Extended=true;  LoadStuctChar(NDat.Data,argv[++i],sizeof(NDat.Data)-1); break;
+					case 't': LoadStuctChar(NDat.Tag,argv[++i],sizeof(NDat.Tag)-1);break; 
+					case 'a': LoadStuctChar(NDat.Link_File,argv[++i],sizeof(NDat.Link_File)-1); break; 
+					case 'i': Invert=true; break;   
+					case 'e': Extended=true; break;
                
 					case '-': switchs(argv[i]){
 
+						cases("--addfile") Set("AddFile",0,NULL); exit(0); break;  
+						cases("--showfile") Set("ShowFile",0,NULL); exit(0); break;  
+						cases("--setfile") Set("SetFile",atoi(argv[2]),NULL); exit(0); break;  
+ 
+						cases("--color_index") Set("Color_Index=",0,argv[2]); exit(0); break;  
+						cases("--color_date") Set("Color_Date=",0,argv[2]); exit(0); break;  
+						cases("--color_tag") Set("Color_Tag=",0,argv[2]); exit(0); break;  
+						cases("--color_note") Set("Color_Note=",0,argv[2]); exit(0); break;  
+						cases("--color_file") Set("Color_File=",0,argv[2]); exit(0); break;  
+						cases("--color_other") Set("Color_Other=",0,argv[2]); exit(0); break;  
+
+						cases("--font") Set("Font=",0,argv[2]); exit(0); break;  
+						cases("--editor") Set("Editor=",0,argv[2]); exit(0); break;  
+ 
 						cases("--setting") printf("%s\n",Setting); exit(0); break;
 						cases("--rebuild") Rebuild(); exit(0); break;
 						cases("--help") Help(); exit(0); break;
-               			cases("--print") LoadVbit(0,'p'); j=length; break;
-						cases("--show")  LoadVbit(0,'s'); j=length; break;
-						cases("--index") LoadVbit(1,'x'); LoadStuctInt(argv[++i]); j=length; break;
-						cases("--tag") LoadVbit(2,'t'); LoadStuctChar(NDat.Tag,argv[++i],sizeof(NDat.Tag)-1); j=length; break;
-						cases("--date") LoadVbit(3,'d'); Extended=true; LoadStuctChar(NDat.Data,argv[++i],sizeof(NDat.Data)-1); j=length; break;
-						cases("--extended") Vbit[0]='p'; Extended=true; break;
-						cases("--append") LoadVbit(4,'a'); LoadStuctChar(NDat.Link_File,argv[++i],sizeof(NDat.Link_File)-1); j=length; break;
-						cases("--file") LoadVbit(6,'f'); LoadStuctInt(argv[++i]); j=length; break;
-						cases("--filepath") LoadVbit(6,'F'); LoadStuctInt(argv[++i]); j=length; break;
-						cases("--remove") LoadVbit(7,'r'); LoadStuctInt(argv[++i]); j=length; break;
-						cases("--invert") LoadVbit(5,'i'); j=length; break;
-			
+						
+						cases("--show")  Loadbit('s'); j=length; break;
+						cases("--remove") Loadbit('r'); LoadStuctInt(argv[++i]); j=length; break;
+						cases("--index") Loadbit('x'); LoadStuctInt(argv[++i]); j=length; break;
+						cases("--file") Loadbit('f'); LoadStuctInt(argv[++i]); j=length; break;
+						cases("--filepath") Loadbit('F'); LoadStuctInt(argv[++i]); j=length; break;
+						cases("--date") Loadbit('d'); Extended=true; LoadStuctChar(NDat.Data,argv[++i],sizeof(NDat.Data)-1); j=length; break;
+						cases("--tag")  LoadStuctChar(NDat.Tag,argv[++i],sizeof(NDat.Tag)-1); j=length; break;
+						cases("--append")  LoadStuctChar(NDat.Link_File,argv[++i],sizeof(NDat.Link_File)-1); j=length; break;
+					   
+						cases("--invert") Invert=true; j=length; break;
+						cases("--extended") Extended=true; j=length; break;
+
 						defaults Error(ErrorOption,argv[i]); j=length; break;}
 					switchs_end; break;
  
@@ -100,7 +108,8 @@ for (i=1; i<argc; i++){
      
 	default: LoadNote(NDat.Note,argv[i],sizeof(NDat.Note)-1); break; }}
 
-if (argc < 2 ) Vbit[0]='p'; 
-else if (Vbit[0]==' ') Vbit[0]='W';
+if (strlen (NDat.Note) == 0 && bit==' ' && strlen (NDat.Link_File) == 0)  bit='p';
+else if (bit!=' ' && strlen (NDat.Note) != 0 ) Error(ErrorOption,argv[i]);
+else if (strlen (NDat.Note) == 0 && strlen (NDat.Link_File) != 0 ) Error(ErrorLogic,"");
+else if (bit==' ') bit='W';
 Controll();}
-

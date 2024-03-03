@@ -36,7 +36,7 @@ if (newPtr != NULL){
 	prevPtr = NULL;
 	currPtr = *sPtr;
 
-	if(Vbit[5]=='i'){
+	if(Invert==true){
 		while (currPtr != NULL && strcasecmp (currPtr->str,string)>0){ 
 			prevPtr = currPtr;
 			currPtr = currPtr->prosPtr;}}
@@ -52,10 +52,10 @@ if (newPtr != NULL){
   
 	else{
 		prevPtr->prosPtr = newPtr;
-		newPtr->prosPtr = currPtr;}}
-		 
+		newPtr->prosPtr = currPtr;}} 
+  
 else return 1;
- return 0;}
+return 0;}
 
 void DeleteList(NodiListaPtr *sPtr){
 	
@@ -68,7 +68,7 @@ while ( !Empty( *sPtr ) ) {
    
 void Trova(int x){ // carica la nota puntata dalle funzioni "PrintList" e "PrintNotesTag" nella struttura "NDat"
  
-if ((PtrFile = fopen (DefaultFile, "r")) == NULL )Error(ErrorOpenFile,"");
+if ((PtrFile = fopen (File_Note, "r")) == NULL )Error(ErrorOpenFile,"");
 
 fseek(PtrFile,x*sizeof (NotesData),SEEK_SET);
 fread( &NDat, sizeof (NotesData), 1, PtrFile );
@@ -86,7 +86,7 @@ void PrintListTag(NodiListaPtr sPtr){
 while ( sPtr != NULL ) {
 	if (strcmp(sPtr->str,NDat.Tag) != 0){
 		strncpy(NDat.Tag,sPtr->str,sizeof(NDat.Tag));
-		PrintDat();}
+		PrintDat();} 
 	sPtr = sPtr->prosPtr;}}
    
 void PrintNotesTag(NodiListaPtr sPtr,char key[]){
@@ -99,14 +99,14 @@ while ( sPtr != NULL ) {
 int Note_Research(int cont,char key[]){ // legge il file note e carica una lista ordinando i dati 
 
 int size = sizeof (NotesData);   
-int x=0;
- 
+int x=0; 
+
 char num[10];
 
 NodiListaPtr startPtr = NULL; 
    
-if ((PtrFile = fopen (DefaultFile, "r")) == NULL ) Error(ErrorOpenFile,"");
-	
+if ((PtrFile = fopen (File_Note, "r")) == NULL ) Error(ErrorOpenFile,"");
+
 while (!feof(PtrFile)){
 	fseek(PtrFile,x*size,SEEK_SET); 
 	fread( &NDat, size, 1, PtrFile );	
@@ -119,7 +119,7 @@ fclose( PtrFile );
 
 if(cont==4) PrintListTag (startPtr);
 else if (cont==3) PrintList(startPtr);
-else if(cont==2  || cont==1 )PrintNotesTag(startPtr,key);
-
+else if(cont==1 || cont==2)PrintNotesTag(startPtr,key);
+ 
 DeleteList(&startPtr);
 return 0;}	
