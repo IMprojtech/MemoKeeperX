@@ -22,7 +22,10 @@ void SetRead(void) {
         fscanf(PtrFileSet, "%s", buf);
 
         if (buf[0] == '#') {
-            fgets(buf, SizeBuf - 1, PtrFileSet);
+			fgets(buf, SizeBuf - 1, PtrFileSet);
+        } else if (strcmp("SHA1=", buf) == 0) {
+			fscanf(PtrFileSet, "%s", buf);
+			strncpy(HashPass, buf, sizeof(HashPass));
         } else if (strcmp("Editor=", buf) == 0) {
             fscanf(PtrFileSet, "%s", buf);
             strncpy(Editor, buf, sizeof(Editor));
@@ -61,10 +64,15 @@ void SetRead(void) {
 void SetWrite(void) {
 
     if ((PtrFileSet = fopen(Setting, "r")) == NULL) {
+		WriteKey(Key,sizeof(Key));
+		KeyGenerateSHA1(Key,HashPass);
+
         if ((PtrFileSet = fopen(Setting, "w")) == NULL)
             Error(ErrorCreationFile, Setting);
 
         fprintf(PtrFileSet, "\n# !! DO NOT MANUALLY EDIT THIS FILE !!\n\n");
+      
+        fprintf(PtrFileSet, " SHA1= %-10s\n", HashPass);
 
         fprintf(PtrFileSet, "\n# Editor  (VIM,LESS,CAT,NUL)\n");
         fprintf(PtrFileSet, " Editor= %-10s\n", Editor);

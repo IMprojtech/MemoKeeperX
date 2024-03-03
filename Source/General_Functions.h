@@ -13,34 +13,7 @@ printf("%sDESCRIPTION%s\n"
 "        \"MemoKeeperX\" alias \"mkx\" is a command-line Linux application\n"
 "        designed to streamline the management and organization of notes and crucial information.\n"
 "        It provides an intuitive interface for input, categorization, and display of notes,\n"
-"        allowing users to create a hierarchical structure using personalized tags.\n\n"
-
-"%sKEY FEATURES%s\n"
-"      ° Note Creation: Users can input notes containing comments, text, and file paths, \n"
-"        providing a comprehensive view of the desired information.\n\n"
-
-"      ° Hierarchical Organization: Leveraging the use of tags, the program allows users to organize notes into tree structures,\n" 
-"        enabling flexible and customized categorization.\n\n"
-
-"      ° File Links: Users can associate notes with specific files,\n"
-"        creating direct links for quick and efficient access to related resources.\n\n"
-
-"      ° Terminal-Friendly: The program is designed for interaction via the command line Linux,\n"
-"        offering a fast and no-frills user experience.\n\n"
-
-"%sPRACTICAL APPLICATIOS%s\n"
- 
-"      ° Penetration Testing: mkx is an essential tool during information research in pentesting,\n" 
-"        enabling operators to effectively archive discoveries and access them rapidly when needed.\n"
-
-"      ° Personal Management: Adaptable to any field where the orderly storage of notes and texts is crucial,\n"
-"        facilitating the swift retrieval of previously saved information.\n\n"
-
-"%sLICENSE%s\n"
-"      This program is distributed under the terms of the GNU General Public License (GPL), \n"
-"      ensuring the freedom to redistribute and modify the software in accordance with open-source standards.\n\n"
-
-"Create your personal organizational structure with \"MemoKeeperX\" and simplify the management of your information! \n\n",GRS,NML,GRS,NML,GRS,NML,GRS,NML);
+"        allowing users to create a hierarchical structure using personalized tags.\n\n",GRS,NML);
 
 printf("%sCOMMAND LIST%s\n"
 "    --help   \n\n"
@@ -57,9 +30,8 @@ printf("%sCOMMAND LIST%s\n"
 "    -d    find date\n"
 "    -f    print file\n"
 "    -F    print path file\n"
-"    -X    write or read Memo\n\n"
-
-"    --map    interactive organization of notes\n\n",GRS,NML);
+"    -P    data protection\n"
+"    -X    write or read Memo\n\n",GRS,NML);
 
 printf("%sSETTING%s\n"
 "    Modify the behavior and appearance of the program.\n"
@@ -69,6 +41,7 @@ printf("%sSETTING%s\n"
 "    --addfile    add a new notes file\n"
 "    --showfile    shows a list of existing note files\n"
 "    --setfile    set the specified file\n"
+"    --backup    create a backup copy of the file\n"
 
 "    --editor    set a different editor (Vim,Nano,Nul)\n" 
 "    --font    set a different font (GRS,NML)\n"
@@ -85,10 +58,12 @@ printf("    %s -t T02 -w \"notes\"   %s->%s    adds a note with tag T02\n"
        
 printf("    %s -t T02 -w \"notes\" -a \"file.txt\"   %s->%s    adds a note and file with tag T02\n",ALIAS,GRS,NML);
 printf("    %s -t T02 -w \"notes\" -a \"file.txt\" -X   %s->%s    adds a note, file and Memo with tag T02\n",ALIAS,GRS,NML);
+printf("    %s -t T02 -w \"notes\" -a \"file.txt\" -XP   %s->%s    add a note, a file and a Memo with T02 tag and protect the data\n",ALIAS,GRS,NML);
 
 printf("    %s   %s->%s    print all notes \n",ALIAS,GRS,NML);
 printf("    %s -e   %s->%s    prints all notes in long format \n",ALIAS,GRS,NML);
 printf("    %s -X   %s->%s    Print all notes including Memo \n",ALIAS,GRS,NML);
+printf("    %s -eXP   %s->%s    Print all notes including Memos and protected notes \n",ALIAS,GRS,NML);
 printf("    %s -t T02   %s->%s    print all notes with tag h02\n",ALIAS,GRS,NML);
 printf("    %s -h [5dca...]   %s->%s    prints the specific note with the hash 5dca...\n",ALIAS,GRS,NML);
 printf("    %s -d 2023-01-01   %s->%s    print all notes date 2023-01-01\n"
@@ -106,13 +81,26 @@ printf("    %s -Ft T02   %s->%s    print the path file with tag T02\n",ALIAS,GRS
 
 printf("    %s -s   %s->%s    shows all tag structure\n",ALIAS,GRS,NML);
 
-printf("    %s -rt T02   %s->%s    removes the T02 tag\n",ALIAS,GRS,NML);
-printf("    %s -rh [5dca...]   %s->%s    removes the 5dca... hash\n"
+printf("    %s -Prt T02   %s->%s    removes the T02 tag\n",ALIAS,GRS,NML);
+printf("    %s -Prh [5dca...]   %s->%s    removes the 5dca... hash\n"
        "		ATTENTION removing a node also recursively deletes its subnodes\n"
        "		├──T01 Hi 1\n"
        "		├──├──T02 Hi 2\n"
        "		Deleting T02 will only delete T02 as there are no subnodes\n"
-       "		By eliminating T01, T02 will also be eliminated as it is a subnode of T01\n\n",ALIAS,GRS,NML);
+       "		By eliminating T01, T02 will also be eliminated as it is a subnode of T01\n",ALIAS,GRS,NML);
+printf("        NOTE -Pr.. is used because the remove operation is a protected operation\n\n");
+
+printf("    %s -Po [5dca...] [7f54...]   %s->%s    move the 5dca... node inside the 7f54 node\n",ALIAS,GRS,NML);
+printf("    %s -Po [5dca...] up  %s->%s    move the 5dca... node up\n",ALIAS,GRS,NML);
+printf("    %s -Po [5dca...] down  %s->%s    move the 5dca... node down\n",ALIAS,GRS,NML);
+printf("    %s -Po [5dca...] .  %s->%s    move the 5dca... node in root \".\"\n",ALIAS,GRS,NML);
+printf("         NOTE -Po is used because the move operation is a protected operation\n\n");
+
+printf("    %s -m [5dca...] -w \"notes\"   %s->%s    edit the note of node 5dca... \n",ALIAS,GRS,NML);
+printf("    %s -m [5dca...] -a \"file.txt\"  %s->%s    edit the link file of node 5dca... \n",ALIAS,GRS,NML);
+printf("    %s -m [5dca...] -X  %s->%s    edit the memo of node 5dca... \n",ALIAS,GRS,NML);
+printf("    %s -m [5dca...] -t  %s->%s    edit the tag of node 5dca... \n",ALIAS,GRS,NML);
+printf("         NOTE -P for protected data\n\n");
 
 printf("    %s --setting   %s->%s    shows the path to the setup file file\n",ALIAS,GRS,NML);
 printf("    %s --addfile   %s->%s    set up a new notes file\n",ALIAS,GRS,NML);
@@ -127,7 +115,7 @@ printf("%sAUTHOR%s\n    Written by  Catoni Mirko (IMprojtech)\n\n",GRS,NML);
 
 printf("%sVERSION%s\n    %s\n\n",GRS,NML,VER);}
 
-void hashToString(const unsigned char *hash, size_t length) {
+void HashToString(const unsigned char *hash, size_t length) {
     for (size_t i = 0; i < length; i++) {
         sprintf(In_Hash + i * 2, "%02x", hash[i]);
     }
@@ -140,7 +128,7 @@ void GenerateSHA1(const NotesData *data) {
     memcpy(buffer, data, sizeof(NotesData));
 
     SHA1(buffer, sizeof(NotesData), hash);
-    hashToString(hash, SHA_DIGEST_LENGTH);
+    HashToString(hash, SHA_DIGEST_LENGTH);
 }
 
 void LoadStruct(char *_dest, char _src[], int size) {
@@ -188,7 +176,7 @@ void Analyze_String_Tag(char *_InTag) {
 
 void DinamicWrite(void) {
 
-    int max_length = 100;
+    int max_length = 160;
     int length     = 0;
     int ch;
 
@@ -214,7 +202,7 @@ void DinamicWrite(void) {
         }
     }
 
-    Memo[length] = '\0';
+    Memo[length] = '\0';	
 }
 
 void TakeTime(void) {
@@ -224,3 +212,4 @@ void TakeTime(void) {
     localTime = localtime(&currentTime);
     strftime(NDat.Date, sizeof(NDat.Date), "%Y-%m-%d %H:%M:%S", localTime);
 }
+

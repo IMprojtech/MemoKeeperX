@@ -1,9 +1,19 @@
 
 #include "Tree_Functions.h"
 #include "Tree_Functions_Print.h"
-#include "Search_Date_Processing.c"
+#include "Search_Date_Process.c"
 
 void ProcessTree(void) {
+
+	if(Protect == true){
+		char TmpHashPass[65];
+	
+		WriteKey(Key,sizeof(Key));
+		KeyGenerateSHA1(Key,TmpHashPass);
+		
+		if (strcmp(TmpHashPass,HashPass)!=0)
+			Error(ErrorPassword,"");
+	}
 	
 	if (Modify == true) {
 		
@@ -25,12 +35,20 @@ void ProcessTree(void) {
 		
 		find = FindHashNode;
 		TreeNode *node = FindNode(root, In_Hash, find);
-	
+		
 		if (node == NULL){
 			Error(ErrorFound,"");
 		}	
 		
 			ReadNDat(node->data.start,node->data.end);	
+			
+			if(NDat.Protection == true){
+				if(Protect == true)
+					Decrypt(Key);
+				else
+					Error(ErrorProtect,"");
+			}
+			
 			node->data.start=0;
 			node->data.end=0;
 			
@@ -48,6 +66,9 @@ void ProcessTree(void) {
 			if (Mem == true) 
 				Edit();
 		
+			if(Protect == true)
+				Crypt(Key);
+
 			CopyNDat(&tmpNDat, &NDat);
 			CopyMemo(&tmpMemo, &Memo);		
 		
@@ -76,6 +97,9 @@ void ProcessTree(void) {
         strcpy(data.tag, NDat.Tag);
         strcpy(data.date, NDat.Date);
         strcpy(data.hash, In_Hash);
+
+		if(Protect == true)	
+			Crypt(Key);
 
         CopyNDat(&tmpNDat, &NDat);
         CopyMemo(&tmpMemo, &Memo);
@@ -119,7 +143,10 @@ void ProcessTree(void) {
     }
 
     else if (Remove == true) {
-
+		
+		if(Protect != true)
+			Error(ErrorProtect,"");
+			
         if (strlen(In_Hash) != 0) {
             int cont = 0;
             find     = FindHashNode;
@@ -157,6 +184,9 @@ void ProcessTree(void) {
     }
 
 	else if (Organize == true) {
+
+		if(Protect != true)
+			Error(ErrorProtect,"");
 
 		if(In_Hash[0]=='.')
 			Error("the root cannot be moved ","");	
@@ -209,6 +239,11 @@ void ProcessTree(void) {
                     In_Tag[size]         = '\0';
                     TreeNode *parentNode = FindNode(root, In_Tag, find);
                     PrintChildren(parentNode);
+                }
+                else if (In_Tag[size] == '-') {
+                    In_Tag[size]         = '\0';
+                    TreeNode *parentNode = FindNode(root, In_Tag, find);
+                    PrintSibling(parentNode);
                 } else {
                     NDatPrintFind(root, In_Tag, find);
                 }
@@ -220,7 +255,12 @@ void ProcessTree(void) {
                 In_Hash[size]        = '\0';
                 TreeNode *parentNode = FindNode(root, In_Hash, find);
                 PrintChildren(parentNode);
-            } else {
+            } 
+            else if (In_Hash[size] == '-') {
+                In_Hash[size]        = '\0';
+                TreeNode *parentNode = FindNode(root, In_Hash, find);
+                PrintSibling(parentNode);
+            }else {
                 NDatPrintFind(root, In_Hash, find);
             }
         } else if (strlen(In_Date) != 0) {

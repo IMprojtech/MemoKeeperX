@@ -31,8 +31,11 @@
 
 #define ErrorProcess "process"
 
+#define ErrorProtect "protected"
+#define ErrorPassword "invalid password"
+
 void Error(char str1[], char str2[]) {
-    fprintf(stderr, "%s%s[ERROR]%s %s %s\n", RED, GRS, NML, str1, str2);
+    fprintf(stderr, "\r%s%s[ERROR]%s %s %s\n", RED, GRS, NML, str1, str2);
     exit(EXIT_FAILURE);
 }
 

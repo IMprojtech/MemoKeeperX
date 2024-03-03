@@ -23,8 +23,7 @@ void PrintMemo(char *str, int depth) {
         token = newline + 1;  
     }
 
-    printf("%s%s%s%s\n", Font, Color_Memo, token, NML);
-    BRANCH_SPACE(depth);
+    printf("%s%s%s%s", Font, Color_Memo, token, NML);
 }
 
 //----- Stampa NDat -----
@@ -108,10 +107,37 @@ void NDatPrintAll(TreeNode *root, int depth) {
 
     ReadNDat(root->data.start, root->data.end);
 
+	if(NDat.Protection==true){ 
+		if(Protect==true)
+			Decrypt(Key);
+		else
+			Mask();
+	}
+    
     Print(root, depth);
 
     NDatPrintAll(root->firstChild, depth + 1);
     NDatPrintAll(root->nextSibling, depth);
+}
+
+void NDatPrintList(TreeNode *root, int depth) {
+
+    if (root == NULL) {
+        return;
+    }
+
+    ReadNDat(root->data.start, root->data.end);
+
+	if(NDat.Protection==true){ 
+		if(Protect==true)
+			Decrypt(Key);
+		else
+			Mask();
+	}
+    
+    Print(root, depth);
+
+    NDatPrintList(root->nextSibling, depth);
 }
 
 void NDatPrintFind(TreeNode *root, char *key, FindFunction find) {
@@ -122,11 +148,57 @@ void NDatPrintFind(TreeNode *root, char *key, FindFunction find) {
 
     if (find(root, key) == 0) {
         ReadNDat(root->data.start, root->data.end);
+        
+   	if(NDat.Protection==true){ 
+		if(Protect==true)
+			Decrypt(Key);
+		else
+			Mask();
+	}
+	
         Print(root, 0);
     }
 
     NDatPrintFind(root->firstChild, key, find);
     NDatPrintFind(root->nextSibling, key, find);
+}
+
+void PrintChildren(TreeNode *parentNode) {
+
+    if (parentNode == NULL || parentNode->firstChild == NULL) {
+        return;
+    }
+
+    ReadNDat(parentNode->data.start, parentNode->data.end);
+    
+   	if(NDat.Protection==true){ 
+		if(Protect==true)
+			Decrypt(Key);
+		else
+			Mask();
+	}
+	
+    Print(parentNode, 0);
+    NDatPrintAll(parentNode->firstChild, 1);
+}
+
+void PrintSibling(TreeNode *parentNode) {
+
+    if (parentNode == NULL || parentNode->firstChild == NULL) {
+        return;
+    }
+
+    ReadNDat(parentNode->data.start, parentNode->data.end);
+    
+   	if(NDat.Protection==true){ 
+		if(Protect==true)
+			Decrypt(Key);
+		else
+			Mask();
+	}
+	
+    Print(parentNode, 0);
+    NDatPrintList(parentNode->firstChild, 1);
 }
 
 //----- Stampa Albero -----
@@ -163,13 +235,4 @@ void PrintTree(TreeNode *root, int depth) {
     PrintTree(root->nextSibling, depth);
 }
 
-void PrintChildren(TreeNode *parentNode) {
 
-    if (parentNode == NULL || parentNode->firstChild == NULL) {
-        return;
-    }
-
-    ReadNDat(parentNode->data.start, parentNode->data.end);
-    Print(parentNode, 0);
-    NDatPrintAll(parentNode->firstChild, 1);
-}

@@ -45,14 +45,11 @@ int main(int argc, char *argv[]) {
 
     Start_System_Check();
     printf("%s", Font);
-
+		
     ProcessArguments(argc, argv);
     root = LoadFromFile(root);
 
-    if (Map == false)
-        ProcessTree();
-    else
-        Mapping();
+    ProcessTree();
 
     if (Memo != NULL)
         free(Memo);

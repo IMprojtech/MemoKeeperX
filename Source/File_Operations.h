@@ -20,10 +20,10 @@ void ReadNDat(int start, int end) {
     fseek(In, start, SEEK_SET);
     if (end > 0) {
         fread(&NDat, sizeof(NotesData), 1, In);
-        size_t memoLength = end - start - sizeof(NotesData);
-        if(memoLength>1){
-			Memo = (char *)malloc(memoLength * sizeof(char));
-			fread(Memo, memoLength, 1, In);}
+        size_t MemoLengthRead = end - start - sizeof(NotesData);
+        if(MemoLengthRead>1){
+			Memo = (char *)malloc(MemoLengthRead * sizeof(char));
+			fread(Memo, MemoLengthRead, 1, In);}
         }
 
     fclose(In);
@@ -35,7 +35,8 @@ void CopyNDat(NotesData *dest, NotesData *src) {
     strcpy(dest->Comment, src->Comment);
     strcpy(dest->Link_File, src->Link_File);
     strcpy(dest->Date, src->Date);
-
+    strcpy((char *)dest->Iv, (char *)src->Iv);
+    dest->Protection = src->Protection;
 }
 
 void CopyMemo(char **dest, char **src) {
@@ -50,9 +51,7 @@ void CopyMemo(char **dest, char **src) {
             Error(ErrorMemory, "");
         }
     } else
-        *dest = NULL;
-        
-     
+        *dest = NULL;    
 }
 
 void ReadFile(FILE *In, int start, int end) {
@@ -67,10 +66,10 @@ void ReadFile(FILE *In, int start, int end) {
 
     if (end > 0) {
         fread(&NDat, sizeof(NotesData), 1, In);
-        size_t memoLength = end - start - sizeof(NotesData);
-        if(memoLength>1){
-			Memo = (char *)malloc(memoLength * sizeof(char));
-			fread(Memo, memoLength, 1, In);}
+		size_t MemoLengthRead = end - start - sizeof(NotesData);
+        if(MemoLengthRead>1){
+			Memo = (char *)malloc(MemoLengthRead * sizeof(char));
+			fread(Memo, MemoLengthRead, 1, In);}
     }
 }
 
@@ -153,7 +152,7 @@ void Edit(void) {
         Error(ErrorCreationFile, "");
     
      if (Memo != NULL) {
-        int check = fwrite(Memo, sizeof(char), strlen(Memo)+1, tempFile);
+        int check = fwrite(Memo, sizeof(char),strlen(Memo)+1, tempFile);
         if (check == 0)
 			Error(ErrorWriteFile, "");
 	}

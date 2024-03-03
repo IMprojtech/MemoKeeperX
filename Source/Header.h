@@ -3,7 +3,7 @@
 
 // General_Functions.h
 void Help(void);
-void hashToString(const unsigned char *hash, size_t length);
+void HashToString(const unsigned char *hash, size_t length);
 void GenerateSHA1(const NotesData *data);
 void LoadStruct(char *_dest, char _src[], int size);
 void LoadComment(char *_dest, char _src[], int size);
@@ -20,3 +20,11 @@ void Save(NotesData *tmpNDat,char **Memo);
 void Edit(void);
 void PrintFile(void);
 void Backup(void);
+
+// Protect.h
+void WriteKey(char *password,int size);
+void KeyGenerateSHA1(const char *input, char *output);
+void Crypt(const char *password);
+void Decrypt(const char *password);
+void Mask(void);
+

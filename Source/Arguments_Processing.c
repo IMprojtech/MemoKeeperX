@@ -204,9 +204,13 @@ void ProcessArguments(int argc, char *argv[]) {
 
 			case 'o':
                 if (i == 0){
-                    CheckShortCompatibility(SHORT_OPT_ORGANIZE);                
+                    CheckShortCompatibility(SHORT_OPT_ORGANIZE); 
                   	Organize = true;
-				}	
+				}                              
+				else {
+	       			LoadStruct(In_Hash, argv[--optind], sizeof(In_Hash) - 1);
+					LoadStruct(Parent_Hash, argv[++optind], sizeof(Parent_Hash) - 1); 
+				}	  	
                 break;     
 
 			case 'm':
@@ -225,6 +229,13 @@ void ProcessArguments(int argc, char *argv[]) {
                 }
                 break;
 
+            case 'P':
+                if (i == 0) {
+                    CheckShortCompatibility(SHORT_OPT_PROTECT);
+                    Protect = true;
+                }
+                break;
+                
             case '?':
                 if (optopt != 0)
                     Error(ErrorArgument, "");
@@ -243,12 +254,10 @@ void ProcessArguments(int argc, char *argv[]) {
             LoadComment(NDat.Comment, argv[j], sizeof(NDat.Comment) - 1);
         } 
     }
-    if (Organize == true) {
+    if (Organize == true) { 
 		if (argc != 4)
-			Error(ErrorArgument, "");
-		else {	
-			LoadStruct(In_Hash, argv[--optind], sizeof(In_Hash) - 1);
-			LoadStruct(Parent_Hash, argv[++optind], sizeof(Parent_Hash) - 1);
-		}
+ 			Error(ErrorArgument, "");
+		if (Protect != true)
+			Error(ErrorArgument, "protected use \"-Po\"");
 	}
 }

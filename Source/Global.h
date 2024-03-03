@@ -21,20 +21,23 @@
 
 typedef struct { //! Notes
     char  Tag[24];
-    char  Comment[501];
-    char  Link_File[201];
+    char  Comment[480];
+    char  Link_File[208];
     char  Date[20];
+    char Iv[16]; 
+    bool Protection;
 } NotesData;
 
 NotesData NDat = {0};
 
 char *Memo;
+char Key[101];
 
 char In_Hash[42];
 char In_Tag[50];
 char In_Date[20];
 
-char Parent_Hash[42];
+char Parent_Hash[42]={'\0'};
 
 char DefaultTag[] = {"T01"};
 
@@ -47,7 +50,8 @@ bool File     = false;
 bool FilePath = false;
 bool Extended = false;
 bool Organize = false;
-bool Modify = false;
+bool Modify	  = false;
+bool Protect  = false;
 
 #include "Header.h"
 #include "Error.h"
@@ -56,4 +60,4 @@ bool Modify = false;
 #include "Tree_Processing.c"
 #include "File_Operations.h"
 #include "General_Functions.h"
-#include "Map.c"
+#include "Protect.h"
