@@ -1,8 +1,10 @@
 
-Il programma cambi nome in MemoKeeper
+Il programma aggiunge la X nel nome diventando "MemoKeeperX"
 
-Aggiunte funzionalità per il setup:
+Aggiunge una struttura ad albero con possibilità di anidamento dei nodi
+    elimina il vincolo dell numero di carateri garazie al opsione -M (Memo) dove e possibile scrivere interi testi
+    migliora funzionalità per il setup
     si possono cambiare i colori, impostare grassetto,
     si possono inoltre creare e gestire più file note direttamente da riga di comando
+    possibilità di aprire file allegati e scrivere Memo con altri editor (vim,nano)
 
-Aggiunta la possibilità di aprire file allegati con altri editor (vim,less,cat)
