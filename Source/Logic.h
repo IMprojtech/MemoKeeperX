@@ -18,10 +18,11 @@ else if (Vbit[0]=='p'){
 	else if (Vbit[3]=='d'){strcpy(key,NDat.Data); Note_Research(2,key);}
     else {Note_Research(3,NULL);}}
   
-else if (Vbit[6]=='f'){Trova((NDat.Index)-1);PrintFile();}				
+else if (Vbit[6]=='f'){Trova((NDat.Index)-1);PrintFile();}
+else if (Vbit[6]=='F'){Trova((NDat.Index)-1);PrintPathFile();}
 else if (Vbit[0]=='s'){Note_Research(4,NULL);}	
 else if (Vbit[7]=='r'){ Save();}
-  
+
 else Error(ErrorSintax,"");}
 
 void LoadVbit(int x,char ch){ 
@@ -37,6 +38,9 @@ void LoadStuctInt(char _src[]){
 if(_src==NULL)Error(ErrorArgument,"");  
 else NDat.Index=atoi(_src);}
 
+void LoadStuctIntInt(int _val){
+NDat.Index=_val;}
+
 void LoadNote(char *_dest,char _src[],int size){
 if(strlen(_dest)+strlen(_src)>size) Error(ErrorOverflow,"");
 else{  strcat(_dest,_src); strcat (_dest," ");}}
@@ -44,12 +48,17 @@ else{  strcat(_dest,_src); strcat (_dest," ");}}
 void Scanner(int argc, char **argv){ // fa una scanzione degli argomenti passati dal terminale e verifica che non ci siano argomenti errati 
 	
 int i,j; 
-int length; 
+int length, value;
 
-char ch; 
+char ch,*str; 	
 
 for (i=1; i<argc; i++){     	
 	switch (argv[i][0]){
+		case '+':  LoadVbit(6,'f'); value=strtod(argv[i],&str);
+			if (value>0 && strlen(str)<=0){ LoadStuctIntInt(value); j=length;}
+			else Error(ErrorOption,argv[i]);
+			break;
+		
 		case '-': length=strlen(argv[i]);
 			for(j=1; j<length; ++j){ ch=argv[i][j];
 				switch (ch){
@@ -58,9 +67,11 @@ for (i=1; i<argc; i++){
 					case 's': LoadVbit(0,ch);  break;
 					case 'x': LoadVbit(1,ch); LoadStuctInt(argv[++i]); break; 
 					case 't': LoadVbit(2,ch); LoadStuctChar(NDat.Tag,argv[++i],sizeof(NDat.Tag)-1);break; 
-					case 'd': LoadVbit(3,ch); LoadStuctChar(NDat.Data,argv[++i],sizeof(NDat.Data)-1); break;
+					case 'd': LoadVbit(3,ch); Extended=true;  LoadStuctChar(NDat.Data,argv[++i],sizeof(NDat.Data)-1); break;
+					case 'e': Vbit[0]='p'; Extended=true; break;
 					case 'a': LoadVbit(4,ch); LoadStuctChar(NDat.Link_File,argv[++i],sizeof(NDat.Link_File)-1); break; 
 					case 'f': LoadVbit(6,ch); LoadStuctInt(argv[++i]); break;
+					case 'F': LoadVbit(6,ch); LoadStuctInt(argv[++i]); break;
 					case 'r': LoadVbit(7,ch); LoadStuctInt(argv[++i]); break;   
 					case 'i': LoadVbit(5,ch); break;   
                
@@ -69,13 +80,15 @@ for (i=1; i<argc; i++){
 						cases("--setting") printf("%s\n",Setting); exit(0); break;
 						cases("--rebuild") Rebuild(); exit(0); break;
 						cases("--help") Help(); exit(0); break;
-                        cases("--print") LoadVbit(0,'p'); j=length; break;
+               			cases("--print") LoadVbit(0,'p'); j=length; break;
 						cases("--show")  LoadVbit(0,'s'); j=length; break;
 						cases("--index") LoadVbit(1,'x'); LoadStuctInt(argv[++i]); j=length; break;
 						cases("--tag") LoadVbit(2,'t'); LoadStuctChar(NDat.Tag,argv[++i],sizeof(NDat.Tag)-1); j=length; break;
-						cases("--date") LoadVbit(3,'d'); LoadStuctChar(NDat.Data,argv[++i],sizeof(NDat.Data)-1); j=length; break;
+						cases("--date") LoadVbit(3,'d'); Extended=true; LoadStuctChar(NDat.Data,argv[++i],sizeof(NDat.Data)-1); j=length; break;
+						cases("--extended") Vbit[0]='p'; Extended=true; break;
 						cases("--append") LoadVbit(4,'a'); LoadStuctChar(NDat.Link_File,argv[++i],sizeof(NDat.Link_File)-1); j=length; break;
 						cases("--file") LoadVbit(6,'f'); LoadStuctInt(argv[++i]); j=length; break;
+						cases("--filepath") LoadVbit(6,'F'); LoadStuctInt(argv[++i]); j=length; break;
 						cases("--remove") LoadVbit(7,'r'); LoadStuctInt(argv[++i]); j=length; break;
 						cases("--invert") LoadVbit(5,'i'); j=length; break;
 			

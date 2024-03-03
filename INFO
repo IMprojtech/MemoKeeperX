@@ -1,9 +1,6 @@
 
-Modifica di comportamento:
-nm senza argomenti stampa le note anziché l'help
+Aggiunta una visione delle note ristretta senza data e senza percorso file, con possibilità di estendere la visione con -e
 
-Il file Notes.Dat viene creato nella home e il file nm.conf viene creato in home/.config
+Aggiunta una scorciatoia per aprire file allegati con +(n)
 
-L'utilizzo di -x per stampare un file allegato o cancellare una nota non è più richiesto
-
-Modifica stile
+Aggiunta la possibilità di stampare solo il percorso file allegato con -F (n).  (Utile per redirezione output)

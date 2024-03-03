@@ -11,7 +11,7 @@
 
  #define NAME  "Note Management"
  #define ALIAS  "nm"  
- #define VER  "1.1"
+ #define VER  "1.2"
  
  #define Dir  "/.config" 
  #define SetFile  "/nm.conf" 
@@ -45,10 +45,11 @@ char DefaultTag[21]={"T01"};
 
 char Vbit[8]={"        "}; 
 
+bool Extended=false;
 FILE *PtrFile;  
 	
 time_t rawtime;
-struct tm *ptm;
+ struct tm *ptm;
 
 #include "Error.h"
 #include "Switchs.h"
